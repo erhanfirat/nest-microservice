@@ -1,0 +1,34 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - '3000:3000' # HTTP Port
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      users-ms:
+        condition: service_started
+    networks:
+      - ecommerce-ms
+
+  users-ms:
+    build:
+      context: .
+      dockerfile: apps/users-ms/Dockerfile
+    ports:
+      - '3011:3011'
+    container_name: users-ms
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-ms
+
+networks:
+  ecommerce-ms:
+    driver: bridge
